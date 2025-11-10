@@ -22,7 +22,11 @@ def metricas():
 
 @APP.get("/")
 def index():
-    
+    return """
+        <h2>Projeto II - Sistemas operacionais em cloud</h2>
+        <p><a href="/info"><button>Info</button></a></p>
+        <p><a href="/metricas"><button>Métricas</button></a></p>
+    """
 
 if __name__ == "__main__":
     APP.run(host = "0.0.0.0", port = 5000)
