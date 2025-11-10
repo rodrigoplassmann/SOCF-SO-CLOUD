@@ -26,6 +26,13 @@ def index():
         <h2>Projeto II - Sistemas operacionais em cloud</h2>
         <p><a href="/info"><button>Info</button></a></p>
         <p><a href="/metricas"><button>Métricas</button></a></p>
+      """
+
+@APP.get("/info")
+def info():
+    return """
+        <h2>Integrantes: Rodrigo Schiavinatto Plassmann e Thomas Manussadjian Steinhausser</h2>
+        <a href="/"><button>Voltar</button></a>
     """
 
 if __name__ == "__main__":
