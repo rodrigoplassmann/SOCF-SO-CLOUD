@@ -1,40 +1,52 @@
-from flask import Flask
+from flask import Flask, jsonify
 import psutil
 import os
 import platform
 
 APP = Flask(__name__)
 
+# Variáveis globais
+INTEGRANTES = "Rodrigo Schiavinatto Plassmann e Thomas Manussadjian Steinhausser"
+PID = os.getpid()
+SISTEMA = platform.platform()
+
+# Função para coletar métricas dinâmicas
+def coletar_metricas():
+    memoria_mb = psutil.virtual_memory().used/1024 ** 2
+    porcentagem_cpu = psutil.cpu_percent(interval=1)
+
+    return {
+        "integrantes": INTEGRANTES,
+        "pid": PID,
+        "memoria_mb": round(memoria_mb, 1),
+        "cpu_percent": cpu_percent,
+        "sistema_operacional": SISTEMA
+    }
+
 @APP.get("/")
 def index():
-    return """
-        <h2>Projeto II - Sistemas operacionais em cloud</h2>
-        <p><a href="/info"><button>Info</button></a></p>
-        <p><a href="/metricas"><button>Métricas</button></a></p>
-      """
+    m = coletar_metricas()
+    return f"""
+        <h2>Projeto II - Sistemas Operacionais em Cloud</h2>
+
+        <h3>Métricas atuais</h3>
+        <p><b>Integrantes:</b> {m['integrantes']}</p>
+        <p><b>PID do processo:</b> {m['pid']}</p>
+        <p><b>Memória utilizada (MB):</b> {m['memoria_mb']}</p>
+        <p><b>Uso de CPU (%):</b> {m['cpu_percent']}</p>
+        <p><b>Sistema operacional:</b> {m['sistema_operacional']}</p>
+
+        <p><a href="/info"><button>Info (JSON)</button></a></p>
+        <p><a href="/metricas"><button>Métricas (JSON)</button></a></p>
+    """
 
 @APP.get("/info")
 def info():
-    return """
-        <h2>Integrantes: Rodrigo Schiavinatto Plassmann e Thomas Manussadjian Steinhausser</h2>
-        <a href="/"><button>Voltar</button></a>
-    """
+    return jsonify({"integrantes": INTEGRANTES})
 
 @APP.get("/metricas")
 def metricas():
-    nomes = "Rodrigo Schiavinatto Plassmann e Thomas Manussadjian Steinhausser"
-    pid = os.getpid()
-    memoria_mb = psutil.virtual_memory().used/1024 ** 2
-    porcentagem_cpu = psutil.cpu_percent(interval=1)
-    sistema_operacional = platform.platform()
-
-    return {
-        "nomes": nomes,
-        "pid": pid,
-        "memoria_mb": round(memoria_mb, 1),
-        "porcentagem_cpu": porcentagem_cpu,
-        "sistema_operacional": sistema_operacional
-    }
+    return jsonify(coletar_metricas())
 
 if __name__ == "__main__":
     APP.run(host = "0.0.0.0", port = 5000)
